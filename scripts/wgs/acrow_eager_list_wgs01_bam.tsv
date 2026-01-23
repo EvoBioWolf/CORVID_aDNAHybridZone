@@ -1,0 +1,8 @@
+Sample_Name	Library_ID	Lane	Colour_Chemistry	SeqType	Organism	Strandedness	UDG_Treatment	R1	R2	BAM
+DVT014	DVT014_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/DVT014_UDG_sorted_noqc.bam	
+DVT017	DVT017_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/DVT017_UDG_sorted_noqc.bam	
+KCZ003	KCZ003_UDG	4	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/KCZ003_UDG_sorted_noqc.bam
+KCZ012	KCZ012_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/KCZ012_UDG_sorted_noqc.bam
+NCP001	NCP001_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/NCP001_UDG_sorted_noqc.bam	
+TDN002	TDN002_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/TDN002_UDG_sorted_noqc.bam
+WMP006	WMP006_UDG	1	2	SE	Corvus	single	half	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgs1/results/ext_mapped/WMP006_UDG_sorted_noqc.bam

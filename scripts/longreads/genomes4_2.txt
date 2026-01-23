@@ -1,0 +1,5 @@
+/PATH/06_longreads/ASM73873v6_chr18.fna	ASM73873v6	lw:3
+/PATH/06_longreads/03_assemblies/D_RbY23_chr18_flye_ragtag/D_RbY23_chr18_flye_ragtag.fasta	DRbY23	lw:3
+/PATH/06_longreads/03_assemblies/DNeY39_chr18_flye_ragtag/DNeY39_chr18_flye_ragtag.fasta	DNeY39	lw:3
+/PATH/06_longreads/03_assemblies/DKoC21_chr18_flye_ragtag/DKoC21_chr18_flye_ragtag.fasta	DKoC21	lw:3
+/PATH/06_longreads/03_assemblies/DKoC53_chr18_flye_ragtag/DKoC53_chr18_flye_ragtag.fasta	DKoC53	lw:3

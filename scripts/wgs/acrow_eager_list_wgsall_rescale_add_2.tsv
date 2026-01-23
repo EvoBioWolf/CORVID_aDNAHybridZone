@@ -1,0 +1,3 @@
+Sample_Name	Library_ID	Lane	Colour_Chemistry	SeqType	Organism	Strandedness	UDG_Treatment	R1	R2	BAM
+DVT014	DVT014_merged	2	2	SE	Corvus	single	none	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgsall_02/results/merged_bams/additional/DVT014_libmerged_add.bam
+WMP006	WMP006_merged	2	2	SE	Corvus	single	none	NA	NA	/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/00_eager_wgsall_02/results/merged_bams/additional/WMP006_libmerged_add.bam
