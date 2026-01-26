@@ -5,4 +5,4 @@ Access scripts in this [folder](./scripts).
 
 Quick access to plotting of [main figures](./scripts/plot).
 
-Contact [me](chyiyingwee@gmail.com) for problems. 
+Contact chyiyingwee@gmail.com for problems. 
