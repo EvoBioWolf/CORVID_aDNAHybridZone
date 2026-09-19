@@ -5,11 +5,11 @@
 library(devtools)
 library(ggplot2)
 library(SNPRelate)
-library(openxlsx, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
+library(openxlsx")
 library(dplyr)
-library(psych, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
-library(ggshadow, lib.loc="/dss/dsshome1/lxc0E/di67kah/R")
-library(ggnewscale, lib.loc="/dss/dsshome1/lxc0E/di67kah/R")
+library(psych")
+library(ggshadow")
+library(ggnewscale")
 
 my_colors <- c(
   "E"  = "#7F3B08",

@@ -1,17 +1,19 @@
-library(openxlsx, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
-library(gtools, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
+library(openxlsx)
+library(gtools)
 library(base)
 library(gdsfmt)
-library(SNPRelate, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
-library("plotly",lib="/dss/dsshome1/lxc0E/di67kah/R")
+library(ggplot2)
+library(SNPRelate)
+library("plotly")
 library(stats)
 library(tidyverse)
+library(tibble)
+library(dplyr)
 library(forcats)
-library(patchwork,lib="/dss/dsshome1/lxc0E/di67kah/R")
-library(vcfR, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
-library(memuse, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R")
+library(patchwork)
+library(vcfR)
 
-setwd("/PATH/05_aDNA/02_results/uli_pca")
+setwd("PATH/05_aDNA/02_results/uli_pca")
 
 # (0) Check ancient samples
 # (1) Combine all samples
@@ -27,7 +29,7 @@ PCA <- TRUE
 # ------------------------------------------------------------------------------------------------------------------------------------
 
 # (0) FIRST CHECK PCA OF ANCIENT SAMPLES WITH 1111 SNPS ------------------------------------------------------------------------------
-path <- "/PATH/05_aDNA/02_results/uli_pca/"
+path <- "/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/02_results/uli_pca/"
 setwd(paste(path,"01_angsd_ancient",sep=""))
 vcf.fn <- paste(path,"01_angsd_ancient/ancient_1111_geno_q20_dp3_plink.vcf",sep="")
 sampleinfo <- read.xlsx(paste(path,"01_angsd_ancient/data_snps_individuals_ancient.xlsx",sep=""),colNames=TRUE)
@@ -75,7 +77,7 @@ sampleinfo2 <- read.xlsx(paste(path,"01_angsd_fresh/data_snps_individuals_fresh.
 freshdat <- cbind(sampleinfo2, fresh_geno) %>%
   filter(country_code != "IT", country_code != "PL", country_code != "D", !sample_code %in% c("S02","S04","S06","S07","S09")) #these samples also present in Uli's file but note IT11gg.IT03 and IT13gg.IT05 combined by Uli 
 
-path <- "/PATH/05_aDNA/02_results/uli_pca/"
+path <- "/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/02_results/uli_pca/"
 dat <- read.xlsx(xlsxFile=paste(path,"data_snps_individuals_181130.xlsx",sep=""), sheet="data_individuals_genotypes", colNames=TRUE) 
 all_columns <- union(names(ancdat), names(dat))
 ancdat[setdiff(all_columns, names(ancdat))] <- "N/N" #these missing scaffolds in anc calling
@@ -165,7 +167,7 @@ if(PLINK==TRUE) {
   write.table(out.map,paste(path,"add_fresh_anc_tmp_data_GG_crows.map",sep=""), row.names=FALSE, col.names=FALSE, sep=" ", quote=FALSE)
   
   # run PLINK to convert .ped to binary .bed -----
-  system(paste("/PATH/05_aDNA/02_results/uli_pca/plink --file ",path,"add_fresh_anc_tmp_data_GG_crows --make-bed --allow-extra-chr --chr-set 32 --out ",path,"add_fresh_anc_tmp_data_GG_crows",sep=""))
+  system(paste("/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/02_results/uli_pca/plink --file ",path,"add_fresh_anc_tmp_data_GG_crows --make-bed --allow-extra-chr --chr-set 32 --out ",path,"add_fresh_anc_tmp_data_GG_crows",sep=""))
   
 }
 # ------------------------------------------------------------------------------------------------------------------------------------
@@ -222,8 +224,8 @@ SNP <- snpgdsOpen(paste(path,"add_fresh_anc_tmp_data_GG_crows_polarized2.gds",se
 
 # (5) chr18 genomic landscape --------------------------------------------------------------------------------------------------------
 # Based on my modern demo paper using 50 kb windows (NOT sliding, so peak value is lower that Poelstra's)
-library(CMplot, lib.loc = "/dss/dsshome1/lxc0E/di67kah/R") 
-path2mod = "/PATH/05_aDNA/02_results/uli_pca"
+library(CMplot) 
+path2mod = "/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/02_results/uli_pca"
 y <- read.delim(paste(path2mod,"/hz1_cnx3P_cor2.win.chr18", sep=""), header=TRUE, sep="")
 sorted.y <- y %>% filter(scaffold %in% c("scaffold_60", "scaffold_78")) %>%
   mutate(scaffold = factor(scaffold, levels = c("scaffold_78", "scaffold_60"))) %>% arrange(scaffold)
@@ -246,7 +248,7 @@ yz_modified <- yz %>%
 landscape <- ggplot(yz_modified, aes(x = z, y = Fst)) +
   geom_line(color = "black", size = 1) +  scale_x_reverse() +
   labs(x = "Peak region of chromosome 18 (bp)", y = "Fst") + coord_cartesian(xlim = c(4000000,500000))+
-  scale_x_continuous(labels = scientific, position = "top") + theme_minimal() 
+  scale_x_continuous(labels = scales::scientific_format(), position = "top") + theme_minimal() 
 
 # (6) Heat map ----------------------------------------------------------------------------------------------------------------------------
 # Combine genotype with available colour PC info
@@ -319,6 +321,7 @@ original_order <- unique(heatmap$sample_code)
 genedat <- read.table(file="NCBI_Corvus_cornix_cornix_Annotation_Release_101_peak.CSV", sep=",",header=TRUE) %>%
   mutate(scaffold = ifelse(Accession == "NW_010959954.1","scaffold_78","scaffold_60"))
 
+# note the scaffold position here refers to the old ref2.5 and not the chromosomal position!
 scaffold_levels <- c("scaffold_60", "scaffold_78")
 heatmap_pos <- heatmap %>% 
   filter((scaff == "scaffold_78" & pos >= 1006603 & pos <= 2510417) | (scaff == "scaffold_60" & as.numeric(pos) <= 1000000)) %>%
@@ -537,7 +540,6 @@ sites1 <- heatmap %>% filter(scaff=="scaffold_78") %>%
   filter(sample_code != "LSS003") %>%
   filter(sample_code != "FPd01") %>%
   filter(country_code == "E" | country_code == "F" | country_code == "D"  | country_code == "B" | country_code == "ISR" | country_code == "IRQ") %>%
-  #filter(country_code == "E" | country_code == "B" | country_code == "ISR" | country_code == "IRQ") %>%
   group_by(scaffold) %>%
   filter(all(genotype!=1) & any(genotype !=3)) %>%
   filter(sum(genotype == 3) < 20) #sites with high missingness are removed
@@ -718,8 +720,7 @@ derived_grey2 <- ggplot(heatmap_pos, aes(x = pos, y = "DAF_grey", fill = q_grey)
 gwas2 <- ggplot(heatmap_pos, aes(x = pos, y = "GWAS", fill = GWAS_All_chi2.1df)) +
   geom_tile() +
   scale_fill_gradientn(na.value="black", colors = c("#fef0d9", "#fdae61","#8c2d04"),
-                       #values = c(0, quantile(heatmap_pos$GWAS_All_chi2.1df, 0.75), 1), 
-                       limits = c(0,100)) + theme_minimal() +
+                      limits = c(84, 89)) + theme_minimal() +
   theme(axis.title.y = element_blank(), axis.text.y = element_text(size = 8), axis.ticks.y = element_blank(),
         axis.title.x = element_blank(), axis.text.x = element_blank(), legend.position = "", legend.text = element_text(size = 8))+ guides(fill = "none")
 
@@ -784,12 +785,13 @@ if(PCA==TRUE) {
   
   # subsetting SNPs
   type <- "both_peaks"
-  # SNP.IDs <- subset(snp, CHR!=18 & CHR!="Z")$Locus_Name #"outsidechr18"
-  # SNP.IDs <- subset(snp, CHR==18)$Locus_Name #chr18
-  # SNP.IDs <- subset(snp, CHR==18 & POS>=2090834 & POS<=3062778)$Locus_Name #first_peak n=62 smallerregion: 2587046
-  # SNP.IDs <- subset(snp, CHR==18 & POS>=3085010 & POS<=3594648)$Locus_Name #sec_peak n=50 smallerregion: 3397329
-   SNP.IDs <- subset(snp, CHR==18 & POS>=2587046 & POS<=3397329)$Locus_Name #expanded region from 2587046 to 2090834 and 3397329 to 3594648
+  SNP.IDs <- subset(snp, CHR==18 & POS>=2587046 & POS<=3397329)$Locus_Name #expanded region from 2587046 to 2090834 and 3397329 to 3594648
+  #targets <- gsub(":", "_", SNP.IDs)
+  #write.table(targets,file = "/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/02_results/gghybrid/SNPIDs_pca.txt",quote = FALSE,row.names = FALSE,col.names = FALSE,sep = "\t")
+  #type <- "selected_sites"
+  #SNP.IDs <- paste0("scaffold_78:", selectedsites) #just the 14 fixed selected sites
   
+   
   # PC analysis
   pca_All <- snpgdsPCA(SNP, num.thread=7, maf=0.05, missing.rate=0.05, snp.id=SNP.IDs, sample.id=All)	
  
@@ -799,7 +801,7 @@ if(PCA==TRUE) {
   Out_pcs_All <- data.frame(Out_pcs_All)
   colnames(Out_pcs_All) <- c("sampleID",paste("PC",seq(1:(ncol(Out_pcs_All)-1)),sep=""))
   
-  write.table(Out_pcs_All, paste(path, "add_fresh_anc_out_tmp_PCs_All_pol_smallerregion_", type, ".txt", sep=""), append=FALSE, row.names=FALSE, col.names=TRUE, sep="\t", quote=FALSE, eol="\n")
+ #write.table(Out_pcs_All, paste(path, "add_fresh_anc_out_tmp_PCs_All_pol_smallerregion_", type, ".txt", sep=""), append=FALSE, row.names=FALSE, col.names=TRUE, sep="\t", quote=FALSE, eol="\n")
  
   # Loadings
   corr_All <- snpgdsPCACorr(pca_All, SNP, eig.which=1:4, num.thread=6)
@@ -813,7 +815,7 @@ if(PCA==TRUE) {
   Out_corr_All$position <- unlist(lapply(strsplit(Out_corr_All$snpID,":",fixed=TRUE), `[[`, 2))
   Out_corr_All <- merge(Out_corr_All, snp[,c("Locus_Name","CHR","POS")], by.x="snpID", by.y="Locus_Name", sort=FALSE)
   
-  write.table(Out_corr_All, paste(path, "add_fresh_anc_out_tmp_PCL_All_pol_smallerregion_", type, ".txt", sep=""), append=FALSE, row.names=FALSE, col.names=TRUE, sep="\t", quote=FALSE, eol="\n")
+  #write.table(Out_corr_All, paste(path, "add_fresh_anc_out_tmp_PCL_All_pol_smallerregion_", type, ".txt", sep=""), append=FALSE, row.names=FALSE, col.names=TRUE, sep="\t", quote=FALSE, eol="\n")
   
   # close DB -----
   closefn.gds(SNP)
@@ -821,6 +823,10 @@ if(PCA==TRUE) {
 
 #ALL (both east and south)
 dat1 <- read.table("add_fresh_anc_out_tmp_PCs_All_pol_smallerregion_both_peaks.txt", header = TRUE)
+#dat1 <- read.table("add_fresh_anc_out_tmp_PCs_All_pol_smallerregion_selected_sites.txt", header = TRUE)
+#dat1 <- merge(newdat[1:15], dat1, by.x="sample_code", by.y="sampleID") 
+#!!!this part i need to figure out how I filter previously!!!
+
 df1 <- dat1 %>%
   mutate(identity = case_when(
     newhybrids_P0P1Allo.admix99 %in% c("P0car", "Bxcar") ~ "Carrion",
@@ -838,7 +844,7 @@ p1 <- ggplot(df1) +
   geom_point(aes(x=PC2, y=PC1, fill=identity, colour=identity), size=1, shape=21) +
   geom_point(data = df_label, aes(x = PC2, y = PC1, fill=identity), size=3, shape=c(24,22,24,22), colour="black") +
   #geom_text(data = df_label,aes(x = PC2, y = PC1, label = gsub("_", "", sampleID)), size = 3,vjust = 0.5, hjust = 1,  nudge_x = 0.015) +
-  #geom_text(aes(x=PC1, y=PC2), label=df$sampleID, check_overlap=TRUE, size = 2, vjust=-1) +
+  #geom_text(aes(x=PC2, y=PC1), label=df1$sample_code, check_overlap=TRUE, size = 2, vjust=-1) +
   scale_fill_manual(name="", values=c("#E69F00","#009E73", "#56B4E9")) +
   scale_color_manual(name="", values=c("#E69F00","#009E73", "#56B4E9")) +
   guides(color = guide_legend(override.aes = list(shape = 21, size = 4))  ) +
@@ -856,6 +862,23 @@ p1 <- ggplot(df1) +
         axis.text.y=element_text (size=10, angle=90),
         legend.text=element_text(size=10),
         legend.title=element_text(size=10)) #3x7
+
+# I want to see the hooded crows 3 clusters
+hoodedcluster1 <- df1 %>%
+  filter(PC1 >= 0.025, PC1 <= 0.05) %>%
+  filter(PC2 <= -0.1) %>%
+  dplyr::select(sample_code, PC1, PC2)
+
+hoodedcluster2 <- df1 %>%
+  filter(PC1 >= 0.025, PC1 <= 0.05) %>%
+  filter(PC2 >= -0.1, PC2 <= 0) %>%
+  dplyr::select(sample_code, PC1, PC2)
+
+hoodedcluster3 <- df1 %>%
+  filter(PC1 >= 0.025, PC1 <= 0.05) %>%
+  filter(PC2 >= 0) %>%
+  dplyr::select(sample_code, PC1, PC2)
+
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 # (8)  A conclusion map for color distribution across ancient samples (Panel D) -----------------------------------------------------------
@@ -866,7 +889,7 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 
-anc_color <- read_delim("/PATH/05_aDNA/pop_map_more.txt", delim="\t",col_names=TRUE) 
+anc_color <- read_delim("/dss/dsslegfs01/pr53da/pr53da-dss-0018/projects/2020__ancientDNA/05_aDNA/pop_map_more.txt", delim="\t",col_names=TRUE) 
 coldat <- anc_color %>%
   filter(type == "ancient" & color != "NA")
 

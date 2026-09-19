@@ -1,7 +1,7 @@
 library(devtools)
 library(ggplot2)
 library(dplyr)
-library(ggshadow, lib.loc="/dss/dsshome1/lxc0E/di67kah/R")
+library(ggshadow)
 
 #safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", "#6699CC", "#999933", "#882255", "#44AA99", "#661100", "#888888", "#000000", "#E69F00", "#56B4E9")
 my_colors <- c(

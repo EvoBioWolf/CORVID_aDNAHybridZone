@@ -1,10 +1,10 @@
 #install.packages("smartsnp")
 library("smartsnp")
 library("dplyr")
-library("ggrepel",lib.loc ="/dss/dsshome1/lxc0E/di67kah/R")
+library("ggrepel")
 library("ggplot2")
-library(ggshadow, lib.loc="/dss/dsshome1/lxc0E/di67kah/R")
-library(cowplot, lib.loc="/dss/dsshome1/lxc0E/di67kah/R")
+library("ggshadow")
+library(cowplot)
 
 #colorBlind_anc  <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#E69F00","#882255", "#44AA99", "#661100")
 #safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#E69F00", "#AA4499", "#6699CC", "#999933", "#882255", "#44AA99", "#661100", "#888888", "#000000", "#E69F00", "#56B4E9")
