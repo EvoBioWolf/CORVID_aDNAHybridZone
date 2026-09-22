@@ -4,7 +4,7 @@ All scripts are currently stored in the github [folder](./scripts/). Rscripts fo
 # nfcore/Eager2
 
 I ran [Eager](https://nf-co.re/eager/2.4.7) version 2.4.7 on BioHPC wih conda profile. The Eager pipeline works with nextflow and is designed for ancient DNA analysis.
-I used the pipeline for target-enriched data (as well as WGS for checking). For target-enriched data a SNP bed file was provided in addition to the reference genome v2.5 with chrW.
+I used the pipeline for target-enriched data (as well as WGS for checking and colate analysis). For target-enriched data a SNP bed file was provided in addition to the [old reference genome v2.5](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000738735.1/) with chrW.
 
 I broke the Eager pipeline into two parts. First raw reads are processed up to the part just before mapping. I mapped the trimmed reads to the reference genome with my own script using BWA-aln to multithread more efficiently. I then resume the Eager pipeline with bam input (sorted but duplicates have not been removed).
 
@@ -818,7 +818,7 @@ java -Xmx4g -jar snpEff.jar -v corvus_cornix ${dat}/02_results/uli_pca/add_fresh
 ```
 
 ## Structural variation
-We sequenced ultra long reads using nanopore on 4 selected modern samples, with chr18 enrichment. The scripts for structural variation analysis are in this [folder](./scripts/longreads/). I ran [Sniffles](./scripts/longreads/2.0_sniffles.sh) to look for breakpoint, and [Syri](./scripts/longreads/3.4_syri.sh) to align assembled chr18. Chr18 assembled using [flye assembler](./scripts/longreads/3.0_flye.sh). 
+We sequenced ultra long reads using nanopore on 4 selected modern samples, with chr18 enrichment. The scripts for structural variation analysis are in this [folder](./scripts/longreads/). I ran [Sniffles](./scripts/longreads/2.0_sniffles.sh) to look for breakpoint, and [Syri](./scripts/longreads/3.4_syri.sh) to align assembled chr18. Chr18 assembled using [flye assembler](./scripts/longreads/3.0_flye.sh). This analysis used the most recent hooded crow reference genome for alignment [GCF_000738735.6](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000738735.6/).
 
 *Note that sample DLoC21 may be referred to as DKoC21 due to naming error from seq company. 
 
@@ -826,3 +826,31 @@ We sequenced ultra long reads using nanopore on 4 selected modern samples, with 
 Ancestry assignment across chromosome based on allele frequencies of reference populations using likelihood approach
 
 We ran this [Rscript](./scripts/plot/figure4_selection.R) to assign each bin of 100 bp region into either Carrion or Hooded crow ancestry. Only delta likelihoods >1 or <-1 are used for confident assignment
+
+This analysis used the most recent hooded crow reference genome for alignment [GCF_000738735.6](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000738735.6/). The reads mapped to the old reference genome were extracted by known scaffold-to-chr mapping (from Fidel) and then remap to the specific chromosome on the new reference genome: [4.0_ref5.7_anc.sh](./scripts/4.0_ref5.7_anc.sh).
+
+# Hybrid zone movement 
+We conducted clinal analysis on modern and ancient samples (1-2.5 kya). To ensure that the populations are comparable across time, sample size and location were matched. This resulted in a total of 35 individuals in the modern and ancient analysis each, including France (n=2), Germany (n=7), Poland (n=1), Bulgaria (n=2), Russia (n=3), and the reference populations Spain (n=15) and Iraq (n=5). 
+
+[4.2_prep_gghybrid.sh](./scripts/4.2_prep_gghybrid.sh)
+```
+cd ${dat}/01_angsd_enrichedallfresh_rescaled
+
+plink --bfile enrichedallfresh_rescaled_outlier_1111_geno_maxmis_q20_dp3_plink --allow-extra-chr --recode structure --out ${dat}/02_results/gghybrid/enrichedallfresh_rescaled_outlier_1111_geno_maxmis_q20_dp3_plink
+plink --bfile enrichedallfresh_rescaled_neutral_geno_maxmis_q20_dp3_plink --allow-extra-chr --recode structure --out ${dat}/02_results/gghybrid/enrichedallfresh_rescaled_neutral_geno_maxmis_q20_dp3_plink
+```
+
+Then run [figure4_gghybrid.R](./scripts/plot/figure4_gghybrid.R) which used gghybrid 1.0 to infer hybrid index for each individual. A population mean HI was estimated. Geographical distances were estimated by calculating the shortest distance from the sample locality to the curved hybrid zone [imported from google earth](https://earth.google.com/web/@51.12514465,11.23695731,-220.96582009a,4600581.25407994d,35y,0.00005444h,0t,0r/data=CgRCAggBMikKJwolCiExTWZRdUNwbi16ZUZCdlBjTDJPNG9NVEd5TERFY0lTSGEgAToDCgExQgIIAEoICPz5-qoDEAE?authuser=1). If samples from the same population have different geographical locations, the mean distance was taken. 
+
+The second part of script [figure4_gghybrid.R](./scripts/plot/figure4_gghybrid.R) then used HZAR 0.2.5 to estimate clines.
+
+# Pairwise coalescence rate analysis
+
+ARG was inferred by  Matthew Osmond and Tabris Cao using the modern samples we sequenced (all samples in Gwee et al. 2025) but mapped to the most updated reference genome [GCF_000738735.6](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000738735.6/). 
+
+Based on the ARG tree inferred, we estimated mutation ages of ~3M variant sites across the whole genome using Colate. The mutation sites inferred with ages were then used to estimate paiwrise coalescence rates of the anicent samples, which were otherwised too low-depth to be used in ARG. 
+
+We found that the coal rates estimated are unreliable when applied to enriched dataset - experimenting with high coverage modern samples but restricted to target-enriched sites only. Insufficient mutation site/ age information may be the cause of such unrelieable estimates. 
+
+We therefore sequenced 6 UDG-treated ancient samples of good endogenous DNA, including 4 hooded crows (KCZ003, KCZ012, NCP001, DVT014), and 2 carrion crows (TDN001, WMP006) with an average coverage of 4X. All piarwise coalescence rates were estimated using script [4.3_colate_wgs.sh](./scripts/4.3_colate_wgs.sh) and plotted with [figure4_colate_combined.R](./scripts/plot/figure4_colate_combined.R)
+
