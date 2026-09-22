@@ -825,7 +825,7 @@ We sequenced ultra long reads using nanopore on 4 selected modern samples, with 
 # Selection through time
 Ancestry assignment across chromosome based on allele frequencies of reference populations using likelihood approach
 
-We ran this [Rscript](./scripts/plot/figure4_selection.R) to assign each bin of 100 bp region into either Carrion or Hooded crow ancestry. Only delta likelihoods >1 or <-1 are used for confident assignment
+We ran this [Rscript](./scripts/plot/figure4_selection.R) to assign each bin of 1000 bp region into either Carrion or Hooded crow ancestry. Only delta likelihoods >1 or <-1 are used for confident assignment
 
 This analysis used the most recent hooded crow reference genome for alignment [GCF_000738735.6](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000738735.6/). The reads mapped to the old reference genome were extracted by known scaffold-to-chr mapping (from Fidel) and then remap to the specific chromosome on the new reference genome: [4.0_ref5.7_anc.sh](./scripts/4.0_ref5.7_anc.sh).
 
