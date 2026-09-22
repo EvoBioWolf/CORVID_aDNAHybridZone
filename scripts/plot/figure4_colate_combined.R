@@ -687,13 +687,18 @@ plot_rate_pca <- function(rate_matrix, time_label) {
     rownames_to_column("sample") %>%
     left_join(pop_data %>% select(sample, population, age_group,age_years), by = "sample") %>%
     mutate(population=factor(population, levels=c("E", "D", "BE","PL","B","IRQ")))
+   if (mean(out$PC1[out$population == "E"], na.rm = TRUE) > 0) {
+    out$PC1 <- -out$PC1
+  }
+  if (mean(out$PC2[out$population == "E"], na.rm = TRUE) > 0) {
+    out$PC2 <- -out$PC2
   variance_explained <- (pca_result$sdev^2 / sum(pca_result$sdev^2)) * 100
   ggplot(out, aes(x = PC1, y = PC2, colour = population, shape = age_group)) +
     geom_point(size = 3) +
     scale_shape_manual(values = c("1500-2500" = 16, "200-1000" = 16, "more_than_10k"=16,"1000-1500"=16,"present"=21)) +
     scale_color_manual(values = colors) +
     geom_text(data = out %>%filter(age_group != "present"),aes(label = sample), vjust = -0.7, size = 2, show.legend = FALSE) +
-    coord_fixed(ratio=1, xlim=c(-5,4), ylim=c(-3, 4), expand=F) +
+    coord_fixed(ratio=1, xlim=c(-5,4), ylim=c(-4, 3), expand=F) +
     theme_classic() +
     guides(shape="none") +
     labs(title = time_label,x = paste0("PC1 (",round(variance_explained[1], 1),"%)"),
